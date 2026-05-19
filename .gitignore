@@ -9,3 +9,5 @@ server/.env
 # Build folders
 client/build/
 client/dist/
+
+server/serviceAccountKey.json
