@@ -1,0 +1,19 @@
+// models/VehicleDocument.js
+const mongoose = require('mongoose');
+
+const vehicleDocSchema = new mongoose.Schema({
+  vehicleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Vehicle'
+  },
+
+  rcDocument: String,
+  insuranceDocument: String,
+  roadTaxDocument: String,
+  pucCertificate: String,
+  permitDocument: String,
+  fitnessCertificate: String
+
+}, { timestamps: true });
+
+module.exports = mongoose.model('VehicleDocument', vehicleDocSchema);

@@ -1,0 +1,11 @@
+# Dono folders ke node_modules ignore karega
+client/node_modules/
+server/node_modules/
+
+# Environment files
+client/.env
+server/.env
+
+# Build folders
+client/build/
+client/dist/

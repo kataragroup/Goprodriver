@@ -1,0 +1,5 @@
+admin login
+
+EMAIL TERMINAL: admin@gmail.com
+ACCESS KEY: kataragroup#@!
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTc3ODM5MTAyNywiZXhwIjoxNzc4NDc3NDI3fQ.wyWsS6d0d8GfVjxYsTzShX-MIxJA3Ne1-npXrF5rXvU
