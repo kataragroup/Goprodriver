@@ -25,6 +25,7 @@ const safeFetch = async (url, options = {}) => {
       sessionStorage.getItem('adminToken') ||
       sessionStorage.getItem('token');
 
+
    const API_BASE = process.env.REACT_APP_API_URL || 'http://13.206.124.146:7000/api';
     const fullUrl = `${API_BASE}${url}`;
 

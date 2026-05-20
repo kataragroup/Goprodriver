@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import axios from 'axios';
+import apiFetch from '../components/Dashboard/Apifetch';   // ← Important
 import { socket } from '../utils/socket';
 
 const useKycData = (handleLogout) => {
@@ -8,18 +8,26 @@ const useKycData = (handleLogout) => {
   const [refreshing, setRefreshing] = useState(false);
   const handleLogoutRef = useRef(handleLogout);
 
-  useEffect(() => { handleLogoutRef.current = handleLogout; }, [handleLogout]);
+  useEffect(() => { 
+    handleLogoutRef.current = handleLogout; 
+  }, [handleLogout]);
 
-  const getToken = () => localStorage.getItem('adminToken');
+  const getToken = () => localStorage.getItem('adminToken') || 
+                         localStorage.getItem('token');
 
   const fetchData = useCallback(async () => {
     const token = getToken();
     if (!token) return;
+
     setLoading(true);
     try {
-      const res = await axios.get('/admin/kyc/all');
-      const records = res.data?.data ?? res.data ?? [];
+      // ✅ Ab apiFetch use kar rahe hain (Live server pe jayega)
+      const res = await apiFetch('/admin/kyc/all');
+      
+      const records = res?.data ?? res ?? [];
       setData(Array.isArray(records) ? records : []);
+      
+      console.log('[useKycData] KYC Data Loaded:', records.length);
     } catch (err) {
       console.error('[useKycData] Fetch Error:', err);
     } finally {
@@ -40,7 +48,10 @@ const useKycData = (handleLogout) => {
       ? item.driverId._id
       : (item.driverId || item.userId || item.driver_id || item._id);
 
-    if (!driverId || typeof driverId === 'object') { alert('Error: Driver ID missing.'); return; }
+    if (!driverId || typeof driverId === 'object') {
+      alert('Error: Driver ID missing.');
+      return;
+    }
 
     const token = getToken();
     if (!token) return;
@@ -49,17 +60,25 @@ const useKycData = (handleLogout) => {
       setRefreshing(true);
       const action = actionType === 'Approved' ? 'approve' : 'reject';
       const type   = item.kycType === 'Owner_driver' ? 'owner' : 'freelance';
-      const response = await axios.put(
+
+      // ✅ apiFetch use kiya
+      const response = await apiFetch(
         `/admin/kyc/${type}/${action}/${driverId}`,
-        { reason: remark, adminNotes: remark }
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason: remark, adminNotes: remark })
+        }
       );
-      if (response.data?.success) {
+
+      if (response?.success) {
         await fetchData();
         if (onSuccess) onSuccess();
         alert('KYC ' + actionType + ' Successfully!');
       }
     } catch (err) {
-      alert('Error: ' + (err.response?.data?.message || err.message || 'Action failed'));
+      console.error(err);
+      alert('Error: ' + (err.message || 'Action failed'));
     } finally {
       setRefreshing(false);
     }

@@ -16,7 +16,7 @@ exports.getAllKyc = async (req, res) => {
     const filter = {};
     if (status) filter.status = status;
 
-    const populateOpts = { path: "driverId", select: "name email phone isKycComplete" };
+    const populateOpts = { path: "driverId", select: "name email phone isKycComplete isApproved" };
 
     let ownerKycs = [];
     let freelanceKycs = [];
@@ -87,7 +87,7 @@ exports.approveKyc = async (req, res) => {
       return res.status(404).json({ success: false, message: `KYC Record not found for driverId/Id: ${driverId}` });
     }
 
-    await Driver.findByIdAndUpdate(updatedKyc.driverId, { isKycComplete: true });
+    await Driver.findByIdAndUpdate(updatedKyc.driverId, { isKycComplete: true, isApproved: true });
 
     return res.json({ success: true, message: "KYC Approved", data: updatedKyc });
   } catch (error) {
@@ -125,7 +125,7 @@ exports.rejectKyc = async (req, res) => {
       return res.status(404).json({ success: false, message: `KYC Record not found for driverId/Id: ${driverId}` });
     }
 
-    await Driver.findByIdAndUpdate(updatedKyc.driverId, { isKycComplete: false });
+    await Driver.findByIdAndUpdate(updatedKyc.driverId, { isKycComplete: false, isApproved: false });
 
     return res.json({ success: true, message: "KYC Rejected", data: updatedKyc });
   } catch (error) {
@@ -135,11 +135,12 @@ exports.rejectKyc = async (req, res) => {
 
 exports.getKycStats = async (req, res) => {
   try {
-    const [oP, oA, oR, fP, fA, fR] = await Promise.all([
+    const [oP, oA, oR, fP, fOSD, fA, fR] = await Promise.all([
       OwnerKyc.countDocuments({ status: "Pending" }),
       OwnerKyc.countDocuments({ status: "Approved" }),
       OwnerKyc.countDocuments({ status: "Rejected" }),
       FreelanceKyc.countDocuments({ status: "Pending" }),
+      FreelanceKyc.countDocuments({ status: "Owner_Step_Done" }),
       FreelanceKyc.countDocuments({ status: "Approved" }),
       FreelanceKyc.countDocuments({ status: "Rejected" }),
     ]);
@@ -147,12 +148,25 @@ exports.getKycStats = async (req, res) => {
     return res.json({
       success: true,
       stats: {
+        owner: {
+          pending:  oP,
+          approved: oA,
+          rejected: oR,
+          total:    oP + oA + oR,
+        },
+        freelance: {
+          pending:      fP,
+          ownerStepDone: fOSD,
+          approved:     fA,
+          rejected:     fR,
+          total:        fP + fOSD + fA + fR,
+        },
         overall: {
-          pending: oP + fP,
+          pending:  oP + fP + fOSD,
           approved: oA + fA,
-          rejected: oR + fR
-        }
-      }
+          rejected: oR + fR,
+        },
+      },
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

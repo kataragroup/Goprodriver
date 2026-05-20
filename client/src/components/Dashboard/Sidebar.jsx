@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { CheckCircle, ShieldCheck, ShieldAlert, LogOut, Users, Car, MapPin, LayoutDashboard, Bell, Truck } from 'lucide-react';
+import { CheckCircle, ShieldCheck, ShieldAlert, LogOut, Users, Car, MapPin, LayoutDashboard, Bell, Truck, UserCircle } from 'lucide-react';
 
 const NAV_ITEMS = [
   { tab: 'overview',       icon: <LayoutDashboard size={18} />, label: 'Overview' },
   { tab: 'users',          icon: <Users size={18} />,           label: 'Users' },
   { tab: 'drivers',        icon: <Car size={18} />,             label: 'Drivers' },
+  { tab: 'driverProfile',  icon: <UserCircle size={18} />,      label: 'Driver Profile' },
   { tab: 'rides',          icon: <MapPin size={18} />,          label: 'Rides' },
   { tab: 'Location',       icon: <Truck size={18} />,           label: 'Location' },
   { tab: 'pending',        icon: <ShieldCheck size={18} />,     label: 'Verification Desk' },
