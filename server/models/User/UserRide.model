@@ -1,0 +1,42 @@
+// =============================================
+// ride.model.js — Ride Model
+// =============================================
+
+const mongoose = require("mongoose");
+
+const rideSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    pickup: {
+      type: String,
+      required: [true, "Pickup location is required"],
+      trim: true,
+    },
+    drop: {
+      type: String,
+      required: [true, "Drop location is required"],
+      trim: true,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "ongoing", "completed", "cancelled"],
+      default: "pending",
+    },
+    fare: {
+      type: Number,
+      default: null,
+    },
+    driver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Driver",
+      default: null,
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Ride", rideSchema);

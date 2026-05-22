@@ -91,33 +91,36 @@ app.use((req, res, next) => {
 });
 
 // ====================== ROUTES ======================
-// 1. Driver/Admin Auth (login, register)
+
+// 1. Driver/Admin Auth
 app.use('/api/admin', require('./routes/Driver/adminRoutes'));
 
-// 2. Main Auth Routes  
+// 2. Main Admin Auth
 app.use('/api/admin/auth', authRoutes);
 
-// 3. KYC Admin Routes
+// 3. KYC Routes
 app.use('/api/admin/kyc', require('./routes/adminKycRoutes'));
 
 // 4. General Admin Routes
 app.use('/api/admin', require('./routes/adminRoutes'));
 
-// 5. Driver App KYC Routes
-app.use('/api/kyc', require('./routes/kycRoutes'));
+// 5. IMPORTANT: User Admin Routes (Dashboard + Feedback)
+app.use('/api/admin', require('./routes/User/AdminRoutes'));
 
-// 6. Driver Routes
+// 6. User Feedback Routes
+app.use('/api/feedback', require('./routes/User/FeedbackRoutes'));
+
+// Driver Routes
 app.use('/api/driver', driverRoutes);
 app.use('/api/driver/auth', driverAuthRoutes);
-
-// 7. Rides
 app.use('/api/rides', require('./routes/Driver/rideRoutes'));
+
 // ====================== ERROR HANDLER ======================
 app.use((err, req, res, next) => {
     console.error("Global Error:", err.stack);
     res.status(500).json({ success: false, message: 'Something went wrong!' });
 });
-app.use('/api/rides', require('./routes/Driver/rideRoutes'));
+
 // ====================== START ======================
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {

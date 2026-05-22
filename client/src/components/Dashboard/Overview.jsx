@@ -22,10 +22,10 @@ const OverviewPage = ({ stats, kycCount, recentUsers = [], recentDrivers = [] })
 
     {/* Stats */}
     <div className="grid grid-cols-4 gap-5 mb-10">
-      <StatCard icon={Users}     label="Total Users"   value={stats.users}   color="bg-indigo-500/10 text-indigo-400"  sub="Registered users"  />
+      <StatCard icon={Users}     label="Total Users"   value={stats.users}   color="bg-indigo-500/10 text-indigo-400"   sub="Registered users"  />
       <StatCard icon={Car}       label="Total Drivers"  value={stats.drivers} color="bg-emerald-500/10 text-emerald-400" sub="Active drivers"     />
-      <StatCard icon={MapPin}    label="Total Rides"    value={stats.rides}   color="bg-orange-500/10 text-orange-400"  sub="All time rides"     />
-      <StatCard icon={FileCheck} label="KYC Approved"   value={kycCount}      color="bg-purple-500/10 text-purple-400"  sub="Verified partners"  />
+      <StatCard icon={MapPin}    label="Total Rides"    value={stats.rides}   color="bg-orange-500/10 text-orange-400"   sub="All time rides"     />
+      <StatCard icon={FileCheck} label="KYC Approved"   value={kycCount}      color="bg-purple-500/10 text-purple-400"   sub="Verified partners"  />
     </div>
 
     {/* Recent snapshots */}
@@ -40,7 +40,9 @@ const OverviewPage = ({ stats, kycCount, recentUsers = [], recentDrivers = [] })
                 <p className="text-[10px] text-gray-600 font-mono">{u._id?.slice(-10)}</p>
               </div>
               <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border
-                ${u.isBlocked ? 'bg-red-500/5 text-red-400 border-red-500/20' : 'bg-emerald-500/5 text-emerald-500 border-emerald-500/20'}`}>
+                ${u.isBlocked
+                  ? 'bg-red-500/5 text-red-400 border-red-500/20'
+                  : 'bg-emerald-500/5 text-emerald-500 border-emerald-500/20'}`}>
                 {u.isBlocked ? 'Blocked' : 'Active'}
               </span>
             </div>
@@ -59,7 +61,9 @@ const OverviewPage = ({ stats, kycCount, recentUsers = [], recentDrivers = [] })
                 <p className="text-[10px] text-gray-600 font-mono">{d._id?.slice(-10)}</p>
               </div>
               <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border
-                ${d.isApproved ? 'bg-emerald-500/5 text-emerald-500 border-emerald-500/20' : 'bg-orange-500/5 text-orange-400 border-orange-500/20'}`}>
+                ${d.isApproved
+                  ? 'bg-emerald-500/5 text-emerald-500 border-emerald-500/20'
+                  : 'bg-orange-500/5 text-orange-400 border-orange-500/20'}`}>
                 {d.isApproved ? 'Approved' : 'Pending'}
               </span>
             </div>
