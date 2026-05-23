@@ -109,6 +109,12 @@ app.use('/api/admin', require('./routes/User/AdminRoutes'));
 
 // 6. User Feedback Routes
 app.use('/api/feedback', require('./routes/User/FeedbackRoutes'));
+app.use('/api/admin', require('./routes/User/FeedbackRoutes'));
+
+// 7. User Address Routes
+app.use('/api/admin/address', require('./routes/User/AddressRoutes'));
+
+app.use('/api/admin/complaints', require('./routes/User/ComplaintRoutes'));
 
 // Driver Routes
 app.use('/api/driver', driverRoutes);
@@ -127,3 +133,4 @@ server.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
     console.log(`📡 KYC Routes: http://localhost:${PORT}/api/admin/kyc`);
 });
+

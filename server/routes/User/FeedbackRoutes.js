@@ -1,21 +1,16 @@
 const express = require('express');
-const router  = express.Router();
+const router = express.Router();
 
-const {
-  getAllFeedbacks,
-  createFeedback,
-  deleteFeedback,
-  getMyFeedbacks,
-} = require('../../controllers/User/FeedbackController');
+//  Correct Imports
+const feedbackCtrl = require('../../controllers/User/FeedbackController'); // Check this path
 
 const { protectUser, isAdmin } = require('../../middleware/User/userAuth');
 
-// ─── User Routes ─────────────────────────────────────────────────────────────
-router.post('/',    protectUser,           createFeedback);  
-router.get('/my',   protectUser,           getMyFeedbacks);   
+// ====================== USER ROUTES ======================
 
-// ─── Admin Routes ─────────────────────────────────────────────────────────────
-router.get('/',             protectUser, isAdmin, getAllFeedbacks); 
-router.delete('/:id',       protectUser, isAdmin, deleteFeedback);   
+router.post('/submit', protectUser, feedbackCtrl.submitFeedback);   // Main Route
+
+router.get('/ride-feedbacks', feedbackCtrl.getAllRideFeedbacks);
+
 
 module.exports = router;
