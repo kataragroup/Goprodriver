@@ -116,6 +116,10 @@ app.use('/api/admin/address', require('./routes/User/AddressRoutes'));
 
 app.use('/api/admin/complaints', require('./routes/User/ComplaintRoutes'));
 
+app.use('/api/admin/wallet', require('./routes/User/WalletRoutes'));
+
+app.use('/api/admin/notifications',require('./routes/User/NotificationRoutes'));
+
 // Driver Routes
 app.use('/api/driver', driverRoutes);
 app.use('/api/driver/auth', driverAuthRoutes);
