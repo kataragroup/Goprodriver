@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/pages/Login';
 import Dashboard from './components/Dashboard';
+import RideFeedbacks from './components/Dashboard/RideFeedbacks';
 import axios from 'axios';
 
 // Local server
@@ -45,6 +46,7 @@ function App() {
                 <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/admin/feedbacks" element={<RideFeedbacks />} />
             </Routes>
         </Router>
     );

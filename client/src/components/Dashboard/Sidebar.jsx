@@ -20,6 +20,9 @@ const USER_NAV_ITEMS = [
   { tab: 'Users',          icon: <Users size={18} />,   label: 'Users' },
   { tab: 'UserLogin',      icon: <LogIn size={18} />,   label: 'User Logins' },
   { tab: 'UserRides',      icon: <MapPin size={18} />,  label: 'User Rides' },
+  { tab: 'feedbacks',      icon: <MessageSquare size={18} />, label: 'Ride Feedbacks' },
+  { tab: 'complaints',     icon: <AlertCircle size={18} />, label: 'Complaints' },
+  { tab: 'notification-logs', icon: <Bell size={18} />, label: 'Notification Logs' },
 ];
 
 const USER_TABS = USER_NAV_ITEMS.map(i => i.tab);

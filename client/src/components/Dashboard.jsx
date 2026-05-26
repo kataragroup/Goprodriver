@@ -18,6 +18,9 @@ import Users           from './Dashboard/User/Users';
 import UserDashboard   from './Dashboard/User/UserDashboard';
 import UserLogin       from './Dashboard/User/UserLogin';
 import UserRides       from './Dashboard/User/UserRides';
+import AllFeedbacks    from '../components/Dashboard/AllFeedbacks'; 
+import AllComplaints   from './Dashboard/AllComplaints';
+import NotificationLogs from '../components/Dashboard/NotificationLogs';
 
 const ComingSoon = ({ label }) => (
   <div className="flex flex-col items-center justify-center h-64 gap-3">
@@ -186,6 +189,13 @@ const Dashboard = () => {
         return <UserLogin showToast={showToast} />;
       case 'UserRides':
         return <UserRides apiFetch={apiFetch} showToast={showToast} />;
+      case 'feedbacks':
+        return <AllFeedbacks apiFetch={apiFetch} showToast={showToast} />;
+      case 'complaints':
+        return <AllComplaints apiFetch={apiFetch} showToast={showToast} />;
+      case 'notification-logs':
+        return <NotificationLogs apiFetch={apiFetch} />;
+
       default:
         return (
           <KycTable
