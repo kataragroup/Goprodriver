@@ -1,5 +1,15 @@
-const LIVE_BASE = 'http://13.206.124.146:7000/api';
+const LIVE_BASE  = 'http://13.206.124.146:7000/api';
 const LOCAL_BASE = 'http://localhost:7000/api';
+
+// Ye routes LOCAL server pe hain — inhe LIVE pe mat bhejo
+const LOCAL_ROUTES = [
+  '/ride-feedbacks',
+  '/admin/ride-feedbacks',
+  '/feedback',
+  '/admin/feedback',
+  '/complaints',
+  '/admin/complaints',
+];
 
 const apiFetch = async (url, options = {}) => {
   if (!url || typeof url !== 'string') return null;
@@ -15,19 +25,14 @@ const apiFetch = async (url, options = {}) => {
     return null;
   }
 
-  // Sab admin/ride/kyc/driver related → Live Server
-  const isLive = url.includes('admin') || 
-                 url.includes('ride') || 
-                 url.includes('kyc') || 
-                 url.includes('driver') ||
-                 url.includes('dashboard');
-
-  const BASE = isLive ? LIVE_BASE : LOCAL_BASE;
-
   const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+
+  // FIX: pehle LOCAL check karo, baad mein LIVE decide karo
+  const isLocal = LOCAL_ROUTES.some(route => cleanUrl.includes(route));
+  const BASE    = isLocal ? LOCAL_BASE : LIVE_BASE;
   const fullUrl = `${BASE}${cleanUrl}`;
 
-  console.log(`[apiFetch] ${options.method || 'GET'} ${fullUrl} | Live: ${isLive}`);
+  console.log(`[apiFetch] ${options.method || 'GET'} ${fullUrl} | Live: ${!isLocal}`);
 
   try {
     const res = await fetch(fullUrl, {
@@ -41,7 +46,13 @@ const apiFetch = async (url, options = {}) => {
     });
 
     if (res.status === 401) {
-      console.error('[apiFetch] 401 Unauthorized');
+      if (isLocal) {
+        // LOCAL pe 401 = logout mat karo
+        console.warn('[apiFetch] 401 LOCAL — logout skip:', fullUrl);
+        return null;
+      }
+      // LIVE pe 401 = token expire, logout karo
+      console.error('[apiFetch] 401 LIVE — logging out');
       localStorage.clear();
       window.location.href = '/login';
       return null;
@@ -52,8 +63,8 @@ const apiFetch = async (url, options = {}) => {
       return null;
     }
 
-    const data = await res.json().catch(() => null);
-    return data;
+    return await res.json().catch(() => null);
+
   } catch (err) {
     console.error(`[apiFetch] Error:`, err.message);
     return null;

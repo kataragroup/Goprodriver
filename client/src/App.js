@@ -5,51 +5,73 @@ import Dashboard from './components/Dashboard';
 import RideFeedbacks from './components/Dashboard/RideFeedbacks';
 import axios from 'axios';
 
-// Local server
+// Local server — feedback bhi yahan hai
 axios.defaults.baseURL = 'http://localhost:7000/api';
 
-axios.interceptors.request.use((config) => {
+// ── Request Interceptor ───────────────────────────────────────────────────────
+axios.interceptors.request.use(
+  (config) => {
     const token = localStorage.getItem('adminToken');
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
-}, (error) => Promise.reject(error));
-
-axios.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            const isAuthCall = error.config?.url?.includes('/admin/login');
-            if (!isAuthCall) {
-                localStorage.clear();
-                sessionStorage.clear();
-                window.location.href = '/login';
-            }
-        }
-        return Promise.reject(error);
-    }
+  },
+  (error) => Promise.reject(error)
 );
 
+// ── Response Interceptor ──────────────────────────────────────────────────────
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const url = error.config?.url || '';
+
+      const isAuthCall     = url.includes('/admin/login');
+      const isFeedbackCall = url.includes('/feedback');   // ← LOCAL route, logout nahi
+
+      if (!isAuthCall && !isFeedbackCall) {
+        console.warn('[axios] 401 detected — logging out. URL:', url);
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = '/login';
+      } else {
+        console.warn('[axios] 401 on safe route — logout skipped. URL:', url);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// ── Route Guards ──────────────────────────────────────────────────────────────
 const ProtectedRoute = ({ children }) => {
-    const token = localStorage.getItem('adminToken');
-    return token ? children : <Navigate to="/login" replace />;
+  const token = localStorage.getItem('adminToken');
+  return token ? children : <Navigate to="/login" replace />;
 };
 
 const PublicRoute = ({ children }) => {
-    const token = localStorage.getItem('adminToken');
-    return !token ? children : <Navigate to="/dashboard" replace />;
+  const token = localStorage.getItem('adminToken');
+  return !token ? children : <Navigate to="/dashboard" replace />;
 };
 
+// ── App ───────────────────────────────────────────────────────────────────────
 function App() {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/admin/feedbacks" element={<RideFeedbacks />} />
-            </Routes>
-        </Router>
-    );
+  return (
+    <Router>
+      <Routes>
+        {/* Public */}
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+
+        {/* Protected */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
+        {/* FIX: ProtectedRoute ke andar daala — pehle yeh bahar tha */}
+        <Route path="/admin/feedbacks" element={<ProtectedRoute><RideFeedbacks /></ProtectedRoute>} />
+
+        {/* Default redirect */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

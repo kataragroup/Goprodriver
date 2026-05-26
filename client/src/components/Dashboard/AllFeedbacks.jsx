@@ -7,9 +7,7 @@ const AllFeedbacks = ({ apiFetch }) => {
 
   useEffect(() => {
     setLoading(true);
-    
-    // centralized Admin Endpoint call
-    apiFetch('/ride-feedbacks') 
+    apiFetch('/feedback/ride-feedbacks') 
       .then((data) => {
         console.log("Admin Authorized Data:", data);
         if (data && data.feedbacks) {
