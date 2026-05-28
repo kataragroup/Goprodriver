@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const AllComplaints = ({ apiFetch, showToast }) => {
@@ -6,7 +6,7 @@ const AllComplaints = ({ apiFetch, showToast }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  /*useEffect(() => {
     axios.get('http://localhost:7000/api/admin/complaints/getAll')
       .then((res) => {
         if (res.data && res.data.complaints) {
@@ -20,10 +20,40 @@ const AllComplaints = ({ apiFetch, showToast }) => {
       })
       .catch((err) => {
         console.error("Complaints Fetch Error:", err);
-        setError("Complaints load karne mein dikkat aayi.");
+        setError("Complaints loading");
         setLoading(false);
       });
-  }, []);
+  }, []);*/
+  
+  // Data load function
+    const loadData = useCallback(() => {
+      setLoading(true);
+      setError(null);
+      apiFetch('/admin/complaints/getAll')
+        .then((data) => {
+          console.log("Admin Authorized Data:", data);
+          if (data && data.complaints) {
+            setComplaints(data.complaints);
+          } else if (Array.isArray(data)) {
+            setComplaints(data);
+          } else if (data && data.data && Array.isArray(data.data)) {
+            setComplaints(data.data);
+          } else {
+            setError("Complaints data format unexpected.");
+          }
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Fetch Error:", err);
+          setError("Authorization fail ya data loading issue.");
+          setLoading(false);
+        });
+    }, [apiFetch]);
+
+    // Initial load hook
+      useEffect(() => {
+        loadData();
+      }, [loadData]);
 
   if (loading) {
     return (
@@ -52,7 +82,7 @@ const AllComplaints = ({ apiFetch, showToast }) => {
       <div className="bg-[#121215] rounded-2xl border border-white/5 overflow-hidden shadow-xl">
         {complaints.length === 0 ? (
           <div className="p-12 text-center text-gray-500 text-sm font-medium">
-            No complaints available. 🎉
+            No complaints available. 
           </div>
         ) : (
           <div className="overflow-x-auto">

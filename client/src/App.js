@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/pages/Login';
 import Dashboard from './components/Dashboard';
 import RideFeedbacks from './components/Dashboard/RideFeedbacks';
+import AllComplaints from './components/Dashboard/AllComplaints';
+import NotificationLogs from './components/Dashboard/NotificationLogs';
 import axios from 'axios';
 
 // Local server — feedback bhi yahan hai
@@ -28,8 +30,10 @@ axios.interceptors.response.use(
 
       const isAuthCall     = url.includes('/admin/login');
       const isFeedbackCall = url.includes('/feedback');   // ← LOCAL route, logout nahi
+      const isComplaintsCall = url.includes('/admin/complaints');  
+      const isNotificationCall = url.includes('/admin/notifications');
 
-      if (!isAuthCall && !isFeedbackCall) {
+      if (!isAuthCall && !isFeedbackCall && !isComplaintsCall && !isNotificationCall) {
         console.warn('[axios] 401 detected — logging out. URL:', url);
         localStorage.clear();
         sessionStorage.clear();
@@ -66,6 +70,9 @@ function App() {
 
         {/* FIX: ProtectedRoute ke andar daala — pehle yeh bahar tha */}
         <Route path="/admin/feedbacks" element={<ProtectedRoute><RideFeedbacks /></ProtectedRoute>} />
+        <Route path="/admin/notifications" element={<ProtectedRoute><NotificationLogs /></ProtectedRoute>} />
+        <Route path="/complaints" element={<ProtectedRoute><AllComplaints /></ProtectedRoute>} />
+        <Route path="/admin/complaints" element={<ProtectedRoute><AllComplaints /></ProtectedRoute>} />
 
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

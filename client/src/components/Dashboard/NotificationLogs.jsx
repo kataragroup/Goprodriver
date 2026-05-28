@@ -1,49 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-const NotificationLogs = () => {
+const NotificationLogs = ({ apiFetch, showToast }) => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchNotificationLogs = async () => {
-      try {
+  // Data load function
+      const loadData = useCallback(() => {
         setLoading(true);
-        
-        // 1.  valid admin/user token 
-        const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
-        
-        const response = await axios.get('http://localhost:7000/api/admin/notifications/getAll', {
-          headers: {
-            'Content-Type': 'application/json',
-            // Bearer format standard check, fallback to raw token if already in Bearer format
-            'Authorization': token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : ''
-          }
-        });
-
-        console.log("=== AXIOS NOTIFICATION LOGS ===", response.data);
-
-        // 3. Postman response schema mapping (.notifications structure)
-        if (response.data && response.data.notifications) {
-          setLogs(response.data.notifications);
-        } else if (Array.isArray(response.data)) {
-          setLogs(response.data);
-        } else {
-          setError("Unexpected response format");
-        }
-      } catch (err) {
-        console.error("Axios API Error:", err);
-        // Error handling backup string parsing
-        const errorMsg = err.response?.data?.message || err.message || "Network Engine Failure";
-        setError(`Auth validation gap: ${errorMsg}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNotificationLogs();
-  }, []);
+        setError(null);
+        apiFetch('/admin/notifications/getAll')
+          .then((data) => {
+            console.log("Admin Authorized Data:", data);
+            if (data && data.notifications) {
+              setLogs(data.notifications);
+            } else if (Array.isArray(data)) {
+              setLogs(data);
+            } else if (data && data.data && Array.isArray(data.data)) {
+              setLogs(data.data);
+            } else {
+              setError("Notifications data format unexpected.");
+            }
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.error("Fetch Error:", err);
+            setError("Authorization fail ya data loading issue.");
+            setLoading(false);
+          });
+      }, [apiFetch]);
+  
+      // Initial load hook
+        useEffect(() => {
+          loadData();
+        }, [loadData]);
 
   if (loading) {
     return (

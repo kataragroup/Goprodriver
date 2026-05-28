@@ -9,6 +9,8 @@ const LOCAL_ROUTES = [
   '/admin/feedback',
   '/complaints',
   '/admin/complaints',
+  '/notifications',         // <-- FIX: Yeh add kiya
+  '/admin/notifications',
 ];
 
 const apiFetch = async (url, options = {}) => {
